@@ -1,98 +1,54 @@
-# TaskFlow - Task Management Frontend
+# React + TypeScript + Vite
 
-A modern, responsive task management application built with React, Redux Toolkit, and Tailwind CSS.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Features
+Currently, two official plugins are available:
 
-- User authentication (login/register)
-- Create, read, update, and delete tasks
-- Filter and sort tasks by status, priority, and due date
-- Responsive design that works on all devices
-- Real-time updates with Redux
-- Form validation and error handling
-- Clean and intuitive user interface
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Technologies Used
+## Expanding the ESLint configuration
 
-- React 18
-- React Router 6
-- Redux Toolkit
-- Tailwind CSS
-- Axios for API requests
-- React Icons
-- React Toastify for notifications
-- Date-fns for date formatting
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-## Prerequisites
-
-- Node.js (v14 or higher)
-- npm or yarn
-- Backend API server (see backend README for setup)
-
-## Getting Started
-
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd task-management/frontend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   # or
-   yarn
-   ```
-
-3. Start the development server:
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   ```
-
-4. Open [http://localhost:5173](http://localhost:5173) in your browser.
-
-## Environment Variables
-
-Create a `.env` file in the root of the frontend directory with the following variables:
-
-```
-VITE_API_URL=http://localhost:5000/api
+```js
+export default tseslint.config({
+  extends: [
+    // Remove ...tseslint.configs.recommended and replace with this
+    ...tseslint.configs.recommendedTypeChecked,
+    // Alternatively, use this for stricter rules
+    ...tseslint.configs.strictTypeChecked,
+    // Optionally, add this for stylistic rules
+    ...tseslint.configs.stylisticTypeChecked,
+  ],
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
 ```
 
-## Available Scripts
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-- `npm run dev` - Start the development server
-- `npm run build` - Build the application for production
-- `npm run preview` - Preview the production build
-- `npm run lint` - Run ESLint
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-## Project Structure
-
+export default tseslint.config({
+  plugins: {
+    // Add the react-x and react-dom plugins
+    'react-x': reactX,
+    'react-dom': reactDom,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended typescript rules
+    ...reactX.configs['recommended-typescript'].rules,
+    ...reactDom.configs.recommended.rules,
+  },
+})
 ```
-src/
-├── app/                  # Redux store configuration
-├── assets/               # Static assets
-├── components/           # Reusable UI components
-│   ├── common/           # Common components (buttons, inputs, etc.)
-│   └── tasks/           # Task-related components
-├── features/             # Feature modules
-│   ├── auth/            # Authentication logic
-│   └── tasks/           # Task management logic
-├── pages/                # Page components
-├── App.jsx               # Main application component
-└── main.jsx              # Application entry point
-```
-
-## Contributing
-
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature/your-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin feature/your-feature`)
-5. Create a new Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

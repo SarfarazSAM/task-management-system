@@ -1,56 +1,44 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { login, reset } from '../features/auth/authSlice';
-import { toast } from 'react-toastify';
-import Spinner from '../components/Spinner';
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router";
+import { toast } from "react-toastify";
+import { useAuthStore } from "../store";
+import Spinner from "../components/Spinner";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   const { email, password } = formData;
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const { user, isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.auth
-  );
+  const { user, loading, error, login: loginUser } = useAuthStore();
 
   useEffect(() => {
-    if (isError) {
-      toast.error(message);
+    if (error) {
+      toast.error(error);
     }
 
-    if (isSuccess || user) {
-      navigate('/');
+    if (user) {
+      navigate("/");
     }
+  }, [user, error, navigate]);
 
-    dispatch(reset());
-  }, [user, isError, isSuccess, message, navigate, dispatch]);
-
-  const onChange = (e) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.name]: e.target.value,
     }));
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const userData = {
-      email,
-      password,
-    };
-
-    dispatch(login(userData));
+    await loginUser(email, password);
   };
 
-  if (isLoading) {
+  if (loading) {
     return <Spinner />;
   }
 
@@ -102,7 +90,7 @@ const Login = () => {
       </form>
       <div className="mt-4 text-center">
         <p className="text-sm text-gray-600">
-          Don't have an account?{' '}
+          Don't have an account?{" "}
           <Link to="/register" className="text-primary-600 hover:underline">
             Sign up
           </Link>

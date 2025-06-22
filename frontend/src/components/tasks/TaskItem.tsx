@@ -1,48 +1,45 @@
-import { Link } from 'react-router-dom';
-import { format } from 'date-fns';
-import { FaEdit, FaTrash } from 'react-icons/fa';
-import { useDispatch } from 'react-redux';
-import { deleteTask } from '../../features/tasks/taskSlice';
-import { toast } from 'react-toastify';
+import { Link } from "react-router";
+import { format } from "date-fns";
+import { FaEdit, FaTrash } from "react-icons/fa";
+import { toast } from "react-toastify";
+import { useTaskStore } from "../../store";
+import type { Task } from "../../types";
 
-const TaskItem = ({ task }) => {
-  const dispatch = useDispatch();
+const TaskItem = ({ task }: { task: Task }) => {
+  const { deleteTask } = useTaskStore();
 
-  const getStatusBadge = (status) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
-      case 'completed':
-        return 'bg-green-100 text-green-800';
-      case 'in progress':
-        return 'bg-blue-100 text-blue-800';
-      case 'pending':
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "in progress":
+        return "bg-blue-100 text-blue-800";
+      case "pending":
       default:
-        return 'bg-yellow-100 text-yellow-800';
+        return "bg-yellow-100 text-yellow-800";
     }
   };
 
-  const getPriorityBadge = (priority) => {
+  const getPriorityBadge = (priority: string) => {
     switch (priority) {
-      case 'high':
-        return 'bg-red-100 text-red-800';
-      case 'medium':
-        return 'bg-blue-100 text-blue-800';
-      case 'low':
+      case "high":
+        return "bg-red-100 text-red-800";
+      case "medium":
+        return "bg-blue-100 text-blue-800";
+      case "low":
       default:
-        return 'bg-gray-100 text-gray-800';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
-  const onDelete = (e) => {
-    e.preventDefault();
-    if (window.confirm('Are you sure you want to delete this task?')) {
-      dispatch(deleteTask(task._id))
-        .unwrap()
-        .then(() => {
-          toast.success('Task deleted successfully');
-        })
-        .catch((error) => {
-          toast.error(error || 'Failed to delete task');
-        });
+  const onDelete = async (id: string) => {
+    if (window.confirm("Are you sure you want to delete this task?")) {
+      try {
+        await deleteTask(id);
+        toast.success("Task deleted successfully");
+      } catch (error) {
+        toast.error(error || "Failed to delete task");
+      }
     }
   };
 
@@ -107,10 +104,10 @@ const TaskItem = ({ task }) => {
           </div>
           <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
             <p>
-              Due{' '}
+              Due{" "}
               {task.dueDate
-                ? format(new Date(task.dueDate), 'MMM d, yyyy')
-                : 'No due date'}
+                ? format(new Date(task.dueDate), "MMM d, yyyy")
+                : "No due date"}
             </p>
           </div>
         </div>

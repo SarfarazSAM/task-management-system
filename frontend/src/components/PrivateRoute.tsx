@@ -1,9 +1,9 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { Navigate, Outlet } from 'react-router';
 import { toast } from 'react-toastify';
+import { useAuthStore } from '../store';
 
 const PrivateRoute = () => {
-  const { user } = useSelector((state) => state.auth);
+  const { user } = useAuthStore();
 
   if (!user) {
     toast.error('Please log in to access this page');

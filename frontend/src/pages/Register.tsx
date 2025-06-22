@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { register, reset } from '../features/auth/authSlice';
+import { Link, useNavigate } from 'react-router';
 import { toast } from 'react-toastify';
+import { useAuthStore } from '../store';
 import Spinner from '../components/Spinner';
 
 const Register = () => {
@@ -16,23 +15,18 @@ const Register = () => {
   const { name, email, password, confirmPassword } = formData;
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const { user, isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.auth
-  );
+  const { user, loading, error, register: registerUser, reset: resetAuth } = useAuthStore();
 
   useEffect(() => {
-    if (isError) {
-      toast.error(message);
+    if (error) {
+      toast.error(error);
+      resetAuth();
     }
 
-    if (isSuccess || user) {
+    if (user) {
       navigate('/');
     }
-
-    dispatch(reset());
-  }, [user, isError, isSuccess, message, navigate, dispatch]);
+  }, [user, error, navigate, resetAuth]);
 
   const onChange = (e) => {
     setFormData((prevState) => ({
@@ -41,7 +35,7 @@ const Register = () => {
     }));
   };
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
@@ -55,10 +49,10 @@ const Register = () => {
       password,
     };
 
-    dispatch(register(userData));
+    await registerUser(userData);
   };
 
-  if (isLoading) {
+  if (loading) {
     return <Spinner />;
   }
 
